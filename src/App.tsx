@@ -1,30 +1,33 @@
 import React, { useState } from "react";
+import styled from "styled-components";
 import Circle from "./Circle";
 
+const Container = styled.div`
+  background-color: ${(props) => props.theme.bgColor};
+`;
+
+const H1 = styled.h1`
+  color: ${(props) => props.theme.textColor};
+`;
+
+interface DummyProps {
+  text: string;
+  otherThingHere?: boolean;
+}
+
+function Dummy({ text, otherThingHere = false }: DummyProps) {
+  return <H1>{text}</H1>;
+}
+
 function App() {
-  const [value, setValue] = useState("");
-  const onChange = (event: React.FormEvent<HTMLInputElement>) => {
-    const {
-      currentTarget: { value },
-    } = event;
-    setValue(value);
-  };
-  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    console.log("test", value);
-  };
+  const onClick = (event: React.MouseEvent<HTMLButtonElement>) => {};
   return (
-    <div>
-      <form onSubmit={onSubmit}>
-        <input
-          value={value}
-          onChange={onChange}
-          type="text"
-          placeholder="username"
-        />
-        <input type="submit" value="login" />
+    <Container>
+      <Dummy text="hello"></Dummy>
+      <form>
+        <button onClick={onClick}></button>
       </form>
-    </div>
+    </Container>
   );
 }
 

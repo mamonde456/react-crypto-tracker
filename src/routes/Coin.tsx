@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useQuery } from "react-query";
 import {
   useParams,
   useLocation,
@@ -10,6 +11,7 @@ import {
   PathMatch,
 } from "react-router-dom";
 import styled from "styled-components";
+import { fetchCoinInfo, fetchCoinTickers } from "../api";
 import Chart from "./Chart";
 import Price from "./Price";
 
@@ -157,72 +159,65 @@ interface PriceData {
 }
 
 function Coin() {
-  const [loading, setLoading] = useState(true);
   const { coinId } = useParams();
   const { state } = useLocation() as RouterState;
-  const [info, setInfo] = useState<InfoData>();
-  const [priceInfo, setPriceInfo] = useState<PriceData>();
   const priceMatch: PathMatch<"coinId"> | null = useMatch("/:coinId/price");
   const chartMatch: PathMatch<"coinId"> | null = useMatch("/:coinId/chart");
-
-  useEffect(() => {
-    (async () => {
-      const infoData = await (
-        await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)
-      ).json();
-      console.log(infoData);
-      const priceData = await (
-        await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)
-      ).json();
-      console.log(priceData);
-      setInfo(infoData);
-      setPriceInfo(priceData);
-      setLoading(false);
-    })();
-  }, [coinId]);
+  const { isLoading: infoLoading, data: infoData } = useQuery<InfoData>(
+    ["info", coinId],
+    () => fetchCoinInfo(coinId)
+  );
+  const { isLoading: tickersLoading, data: tickersData } = useQuery<PriceData>(
+    ["tickers", coinId],
+    () => fetchCoinTickers(coinId)
+  );
+  const loading = infoLoading || tickersLoading;
   return (
     <Container>
-      <>
-        <Header>
-          <Title>{state ? state : loading ? "loading..." : info?.name}</Title>
-        </Header>
-        {loading ? <Loader>Loading...</Loader> : null}
-        <InFo>
-          <InFoLi>
-            Rank: <span>{info?.rank}</span>
-          </InFoLi>
-          <InFoLi>
-            Symbol: <span>{info?.symbol}</span>
-          </InFoLi>
-          <InFoLi>
-            Open Source: <span>{info?.open_source ? "Yes" : "No"}</span>
-          </InFoLi>
-        </InFo>
-        <StartAt>Start At: {info?.started_at?.slice(0, 10)}</StartAt>
-        <Discription>{info?.description}</Discription>
-        <InFo>
-          <InFoLi>
-            Total Supply: <span>{priceInfo?.total_supply}</span>
-          </InFoLi>
-          <InFoLi>
-            Max Supply: <span>{priceInfo?.max_supply}</span>
-          </InFoLi>
-        </InFo>
-        <Tabs>
-          <Tab isActive={chartMatch !== null}>
-            <Link to={`/${coinId}/chart`}>Chart</Link>
-          </Tab>
-          <Tab isActive={priceMatch !== null}>
-            <Link to={`/${coinId}/price`}>Price</Link>
-          </Tab>
-        </Tabs>
+      <Header>
+        <Title>{state ? state : loading ? "loading..." : infoData?.name}</Title>
+      </Header>
+      {loading ? (
+        <Loader>Loading...</Loader>
+      ) : (
+        <>
+          <InFo>
+            <InFoLi>
+              Rank: <span>{infoData?.rank}</span>
+            </InFoLi>
+            <InFoLi>
+              Symbol: <span>{infoData?.symbol}</span>
+            </InFoLi>
+            <InFoLi>
+              Open Source: <span>{infoData?.open_source ? "Yes" : "No"}</span>
+            </InFoLi>
+          </InFo>
+          <StartAt>Start At: {infoData?.started_at?.slice(0, 10)}</StartAt>
+          <Discription>{infoData?.description}</Discription>
+          <InFo>
+            <InFoLi>
+              Total Supply: <span>{tickersData?.total_supply}</span>
+            </InFoLi>
+            <InFoLi>
+              Max Supply: <span>{tickersData?.max_supply}</span>
+            </InFoLi>
+          </InFo>
+          <Tabs>
+            <Tab isActive={chartMatch !== null}>
+              <Link to={`/${coinId}/chart`}>Chart</Link>
+            </Tab>
+            <Tab isActive={priceMatch !== null}>
+              <Link to={`/${coinId}/price`}>Price</Link>
+            </Tab>
+          </Tabs>
 
-        <Outlet />
-        {/* <Routes>
+          <Outlet />
+          {/* <Routes>
           <Route path="/price" element={<Price />} />
           <Route path="/chart" element={<Chart />} />
         </Routes> */}
-      </>
+        </>
+      )}
     </Container>
   );
 }

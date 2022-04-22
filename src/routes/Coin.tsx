@@ -1,6 +1,17 @@
 import { useEffect, useState } from "react";
-import { useParams, useLocation } from "react-router";
+import {
+  useParams,
+  useLocation,
+  Routes,
+  Route,
+  Link,
+  Outlet,
+  useMatch,
+  PathMatch,
+} from "react-router-dom";
 import styled from "styled-components";
+import Chart from "./Chart";
+import Price from "./Price";
 
 const Container = styled.div`
   padding: 0px 10px;
@@ -33,7 +44,7 @@ const InFo = styled.ul`
 `;
 const InFoLi = styled.li`
   width: 25vh;
-  height: 10vh;
+  height: 100px;
   font-size: 16px;
   text-align: center;
   padding-top: 15px;
@@ -65,6 +76,27 @@ const Discription = styled.div`
   margin-top: 10px;
   color: white;
   margin-bottom: 40px;
+`;
+
+const Tabs = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin: 25px 0px;
+`;
+const Tab = styled.span<{ isActive: boolean }>`
+  border-radius: 10px;
+  text-transform: uppercase;
+  background-color: #222027;
+  font-size: 12px;
+  text-align: center;
+  font-weight: 400;
+  padding: 15px 0px;
+  color: ${(props) =>
+    props.isActive ? props.theme.accentColor : props.theme.textColor};
+  a {
+    display: block;
+  }
 `;
 
 interface RouterState {
@@ -130,6 +162,8 @@ function Coin() {
   const { state } = useLocation() as RouterState;
   const [info, setInfo] = useState<InfoData>();
   const [priceInfo, setPriceInfo] = useState<PriceData>();
+  const priceMatch: PathMatch<"coinId"> | null = useMatch("/:coinId/price");
+  const chartMatch: PathMatch<"coinId"> | null = useMatch("/:coinId/chart");
 
   useEffect(() => {
     (async () => {
@@ -148,31 +182,47 @@ function Coin() {
   }, [coinId]);
   return (
     <Container>
-      <Header>
-        <Title>{state ? state : loading ? "loading..." : info?.name}</Title>
-      </Header>
-      {loading ? <Loader>Loading...</Loader> : null}
-      <InFo>
-        <InFoLi>
-          Rank: <span>{info?.rank}</span>
-        </InFoLi>
-        <InFoLi>
-          Symbol: <span>{info?.symbol}</span>
-        </InFoLi>
-        <InFoLi>
-          Open Source: <span>{info?.open_source ? "Yes" : "No"}</span>
-        </InFoLi>
-      </InFo>
-      <StartAt>{info?.started_at}</StartAt>
-      <Discription>{info?.description}</Discription>
-      <InFo>
-        <InFoLi>
-          Total Supply: <span>{priceInfo?.total_supply}</span>
-        </InFoLi>
-        <InFoLi>
-          Max Supply: <span>{priceInfo?.max_supply}</span>
-        </InFoLi>
-      </InFo>
+      <>
+        <Header>
+          <Title>{state ? state : loading ? "loading..." : info?.name}</Title>
+        </Header>
+        {loading ? <Loader>Loading...</Loader> : null}
+        <InFo>
+          <InFoLi>
+            Rank: <span>{info?.rank}</span>
+          </InFoLi>
+          <InFoLi>
+            Symbol: <span>{info?.symbol}</span>
+          </InFoLi>
+          <InFoLi>
+            Open Source: <span>{info?.open_source ? "Yes" : "No"}</span>
+          </InFoLi>
+        </InFo>
+        <StartAt>Start At: {info?.started_at?.slice(0, 10)}</StartAt>
+        <Discription>{info?.description}</Discription>
+        <InFo>
+          <InFoLi>
+            Total Supply: <span>{priceInfo?.total_supply}</span>
+          </InFoLi>
+          <InFoLi>
+            Max Supply: <span>{priceInfo?.max_supply}</span>
+          </InFoLi>
+        </InFo>
+        <Tabs>
+          <Tab isActive={chartMatch !== null}>
+            <Link to={`/${coinId}/chart`}>Chart</Link>
+          </Tab>
+          <Tab isActive={priceMatch !== null}>
+            <Link to={`/${coinId}/price`}>Price</Link>
+          </Tab>
+        </Tabs>
+
+        <Outlet />
+        {/* <Routes>
+          <Route path="/price" element={<Price />} />
+          <Route path="/chart" element={<Chart />} />
+        </Routes> */}
+      </>
     </Container>
   );
 }

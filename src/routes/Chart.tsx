@@ -16,6 +16,7 @@ interface IHistorical {
 
 interface ChartProps {
   coinId: string;
+  state: string;
 }
 
 function Chart() {
@@ -23,19 +24,25 @@ function Chart() {
   const { isLoading, data } = useQuery<IHistorical[]>(["ohlcv", coinId], () =>
     fetchCoinHistory(coinId)
   );
+  const priceData = data?.map((data) => ({
+    x: data.time_open,
+    y: [data.open, data.high, data.low, data.close],
+  }));
   return (
     <div>
       {isLoading ? (
         "Loading chart..."
       ) : (
         <ReactApexChart
-          type="line"
-          series={[
-            {
-              name: "Price",
-              data: data?.map((price) => price.close) as number[],
-            },
-          ]}
+          type="candlestick"
+          series={
+            [
+              {
+                name: "Price",
+                data: priceData,
+              },
+            ] as unknown as number[]
+          }
           options={{
             theme: {
               mode: "dark",
@@ -59,10 +66,9 @@ function Chart() {
             },
             yaxis: {
               labels: { show: false },
-            },
-            fill: {
-              type: "gradient",
-              gradient: { gradientToColors: ["#0be881"], stops: [0, 100] },
+              tooltip: {
+                enabled: true,
+              },
             },
             colors: ["#0fbcf9"],
             tooltip: {

@@ -1,10 +1,8 @@
-import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
+import { Helmet } from "react-helmet";
 import {
   useParams,
   useLocation,
-  Routes,
-  Route,
   Link,
   Outlet,
   useMatch,
@@ -12,15 +10,15 @@ import {
 } from "react-router-dom";
 import styled from "styled-components";
 import { fetchCoinInfo, fetchCoinTickers } from "../api";
-import Chart from "./Chart";
-import Price from "./Price";
 
 const Container = styled.div`
+  max-width: 600px;
+  margin: 0px auto;
   padding: 0px 10px;
 `;
 
 const Header = styled.header`
-  height: 10vh;
+  height: 100px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -40,12 +38,11 @@ const InFo = styled.ul`
   display: flex;
   justify-content: center;
   align-items: center;
-  column-gap: 35px;
+  column-gap: 50px;
   border-radius: 15px;
   margin-top: 50px;
 `;
 const InFoLi = styled.li`
-  width: 25vh;
   height: 100px;
   font-size: 16px;
   text-align: center;
@@ -99,6 +96,12 @@ const Tab = styled.span<{ isActive: boolean }>`
   a {
     display: block;
   }
+`;
+const BackBtn = styled.div`
+  padding: 10px 10px;
+  background: #222027;
+  border-radius: 10px;
+  border: 1px solid whitesmoke;
 `;
 
 interface RouterState {
@@ -169,14 +172,23 @@ function Coin() {
   );
   const { isLoading: tickersLoading, data: tickersData } = useQuery<PriceData>(
     ["tickers", coinId],
-    () => fetchCoinTickers(coinId)
+    () => fetchCoinTickers(coinId),
+    {
+      refetchInterval: 10000,
+    }
   );
   const loading = infoLoading || tickersLoading;
   return (
     <Container>
+      <Helmet>
+        <title>{state ? state : loading ? "loading..." : infoData?.name}</title>
+      </Helmet>
       <Header>
         <Title>{state ? state : loading ? "loading..." : infoData?.name}</Title>
       </Header>
+      <BackBtn as="a" href="/">
+        ↪ Back
+      </BackBtn>
       {loading ? (
         <Loader>Loading...</Loader>
       ) : (
@@ -189,7 +201,7 @@ function Coin() {
               Symbol: <span>{infoData?.symbol}</span>
             </InFoLi>
             <InFoLi>
-              Open Source: <span>{infoData?.open_source ? "Yes" : "No"}</span>
+              Price: <span>${tickersData?.quotes.USD.price.toFixed(3)}</span>
             </InFoLi>
           </InFo>
           <StartAt>Start At: {infoData?.started_at?.slice(0, 10)}</StartAt>
@@ -211,11 +223,7 @@ function Coin() {
             </Tab>
           </Tabs>
 
-          <Outlet />
-          {/* <Routes>
-          <Route path="/price" element={<Price />} />
-          <Route path="/chart" element={<Chart />} />
-        </Routes> */}
+          <Outlet context={{ coinId }} />
         </>
       )}
     </Container>

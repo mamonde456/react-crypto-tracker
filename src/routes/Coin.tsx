@@ -34,7 +34,7 @@ const Loader = styled.span`
 `;
 
 const InFo = styled.ul`
-  background: #222027;
+  background-color: ${(props) => props.theme.contentsTapColor};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -47,7 +47,7 @@ const InFoLi = styled.li`
   font-size: 16px;
   text-align: center;
   padding-top: 15px;
-  color: white;
+  color: ${(props) => props.theme.contentsTextColor};
   span {
     display: block;
     padding-top: 15px;
@@ -64,7 +64,7 @@ const StartAt = styled.div`
   opacity: 0.5;
   text-align: center;
   margin-top: 40px;
-  color: white;
+  color: ${(props) => props.theme.contentsTextColor};
 `;
 
 const Discription = styled.div`
@@ -73,7 +73,7 @@ const Discription = styled.div`
   align-items: center;
   font-size: 25px;
   margin-top: 10px;
-  color: white;
+  ${(props) => props.theme.contentsTextColor};
   margin-bottom: 40px;
 `;
 
@@ -86,7 +86,7 @@ const Tabs = styled.div`
 const Tab = styled.span<{ isActive: boolean }>`
   border-radius: 10px;
   text-transform: uppercase;
-  background-color: #222027;
+  background-color: ;
   font-size: 12px;
   text-align: center;
   font-weight: 400;
@@ -98,10 +98,15 @@ const Tab = styled.span<{ isActive: boolean }>`
   }
 `;
 const BackBtn = styled.div`
+  width: 80px;
   padding: 10px 10px;
-  background: #222027;
+  background-color: ${(props) => props.theme.contentsTapColor};
   border-radius: 10px;
   border: 1px solid whitesmoke;
+  text-align: center;
+  a {
+    display: block;
+  }
 `;
 
 interface RouterState {
@@ -186,8 +191,8 @@ function Coin() {
       <Header>
         <Title>{state ? state : loading ? "loading..." : infoData?.name}</Title>
       </Header>
-      <BackBtn as="a" href="/">
-        ↪ Back
+      <BackBtn>
+        <Link to={`/`}>↪ Back</Link>
       </BackBtn>
       {loading ? (
         <Loader>Loading...</Loader>

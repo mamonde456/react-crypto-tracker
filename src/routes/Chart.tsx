@@ -16,7 +16,6 @@ interface IHistorical {
 
 interface ChartProps {
   coinId: string;
-  state: string;
 }
 
 function Chart() {
@@ -24,7 +23,7 @@ function Chart() {
   const { isLoading, data } = useQuery<IHistorical[]>(["ohlcv", coinId], () =>
     fetchCoinHistory(coinId)
   );
-  const priceData = data?.map((data) => ({
+  const chartData = data?.map((data) => ({
     x: data.time_open,
     y: [data.open, data.high, data.low, data.close],
   }));
@@ -39,7 +38,7 @@ function Chart() {
             [
               {
                 name: "Price",
-                data: priceData,
+                data: chartData,
               },
             ] as unknown as number[]
           }
@@ -55,7 +54,6 @@ function Chart() {
               },
               background: "transparent",
             },
-            grid: { show: false },
             stroke: { curve: "smooth", width: 4 },
             xaxis: {
               labels: { show: false, datetimeFormatter: { month: "mmm 'yy" } },
@@ -66,13 +64,6 @@ function Chart() {
             },
             yaxis: {
               labels: { show: false },
-              tooltip: {
-                enabled: true,
-              },
-            },
-            colors: ["#0fbcf9"],
-            tooltip: {
-              y: { formatter: (value) => `$${value.toFixed(3)}` },
             },
           }}
         />

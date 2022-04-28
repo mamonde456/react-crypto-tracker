@@ -19,7 +19,7 @@ const Tap = styled.span`
     font-size: 28px;
     line-height: 20px;
     &:first-child {
-      color: ${(props) => props.theme.textColor};
+      color: ${(props) => props.theme.accentColor};
       font-size: 16px;
       padding: 0px 50px;
     }

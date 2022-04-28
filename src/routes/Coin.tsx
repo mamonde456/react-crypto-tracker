@@ -166,11 +166,7 @@ interface PriceData {
   };
 }
 
-interface ICoinProps {
-  isDark: boolean;
-}
-
-function Coin({ isDark }: ICoinProps) {
+function Coin() {
   const { coinId } = useParams();
   const { state } = useLocation() as RouterState;
   const priceMatch: PathMatch<"coinId"> | null = useMatch("/:coinId/price");
@@ -232,7 +228,7 @@ function Coin({ isDark }: ICoinProps) {
             </Tab>
           </Tabs>
 
-          <Outlet context={{ coinId, isDark }} />
+          <Outlet context={{ coinId }} />
         </>
       )}
     </Container>

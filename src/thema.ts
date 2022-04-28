@@ -15,5 +15,5 @@ export const light: DefaultTheme = {
   contentsTapColor: "#ced6e0",
   textColor: "black",
   bgColor: "whitesmoke",
-  accentColor: "#3742fa",
+  accentColor: "#e84118",
 };

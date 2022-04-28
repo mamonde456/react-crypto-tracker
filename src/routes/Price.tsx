@@ -12,14 +12,14 @@ const Taps = styled.div`
 `;
 
 const Tap = styled.span`
-  background-color: #222027;
+  background-color: ${(props) => props.theme.bgColor};
   padding: 15px 10px;
   border-radius: 10px;
   span {
     font-size: 28px;
     line-height: 20px;
     &:first-child {
-      color: white;
+      color: ${(props) => props.theme.textColor};
       font-size: 16px;
       padding: 0px 50px;
     }

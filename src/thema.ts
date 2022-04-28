@@ -10,10 +10,10 @@ export const dark: DefaultTheme = {
   themeColor: "black",
 };
 export const light: DefaultTheme = {
-  TapColor: "#2f3542",
+  TapColor: "white",
   contentsTextColor: "#2f3542",
   contentsTapColor: "#ced6e0",
-  textColor: "#2f3542",
-  bgColor: "#ffffff",
+  textColor: "black",
+  bgColor: "whitesmoke",
   accentColor: "#3742fa",
 };

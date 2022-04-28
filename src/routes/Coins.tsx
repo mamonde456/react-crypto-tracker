@@ -63,7 +63,23 @@ interface ICoin {
   type: string;
 }
 
-function Coins() {
+const ThemeBtn = styled.button`
+  width: 120px;
+  padding: 10px 10px;
+  background-color: ${(props) => props.theme.themeColor};
+  color: ${(props) => props.theme.contentsTextColor};
+  border-radius: 0px 0px 10px 10px;
+  margin: 10px 10px;
+  a {
+    display: block;
+  }
+`;
+
+interface ICoinsProps {
+  toggleDark: () => void;
+}
+
+function Coins({ toggleDark }: ICoinsProps) {
   const { isLoading, data } = useQuery<ICoin[]>("allCoins", fetchCoins);
   return (
     <Container>
@@ -72,6 +88,7 @@ function Coins() {
       </Helmet>
       <Header>
         <Title>coin</Title>
+        <ThemeBtn onClick={toggleDark}>Toggle Mode</ThemeBtn>
       </Header>
       {isLoading ? (
         <Loader>Loading...</Loader>

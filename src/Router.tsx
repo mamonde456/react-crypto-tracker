@@ -4,8 +4,6 @@ import Coins from "./routes/Coins";
 import Chart from "./routes/Chart";
 import Price from "./routes/Price";
 
-interface IRouterProps {}
-
 function Router() {
   return (
     <BrowserRouter basename={process.env.PUBLIC_URL}>
